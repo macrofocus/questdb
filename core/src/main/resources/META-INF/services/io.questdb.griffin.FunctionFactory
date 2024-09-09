@@ -995,5 +995,5 @@ io.questdb.griffin.engine.functions.geohash.GeoHashFromCoordinatesFunctionFactor
 io.questdb.griffin.engine.functions.bin.Base64FunctionFactory
 
 # GIS functions
-io.questdb.griffin.engine.functions.gis.PointFromCoordinatesFunctionFactory
+io.questdb.griffin.engine.functions.gis.ST_MakePoint
 io.questdb.griffin.engine.functions.gis.ST_GeomFromText

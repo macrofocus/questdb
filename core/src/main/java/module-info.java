@@ -22,7 +22,7 @@
  *
  ******************************************************************************/
 
-import io.questdb.griffin.FunctionFactory;
+import io.questdb.griffin.engine.functions.gis.ST_MakePoint;
 
 open module io.questdb {
     requires transitive jdk.unsupported;
@@ -1018,7 +1018,7 @@ open module io.questdb {
             io.questdb.griffin.engine.functions.date.ToUTCTimestampFunctionFactory,
 
             // GIS function
-            io.questdb.griffin.engine.functions.gis.PointFromCoordinatesFunctionFactory,
+            io.questdb.griffin.engine.functions.gis.ST_MakePoint,
             io.questdb.griffin.engine.functions.gis.ST_GeomFromText
     ;
 }

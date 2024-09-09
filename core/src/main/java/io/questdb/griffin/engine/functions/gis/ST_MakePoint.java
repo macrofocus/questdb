@@ -26,20 +26,14 @@ package io.questdb.griffin.engine.functions.gis;
 
 import io.questdb.cairo.CairoConfiguration;
 import io.questdb.cairo.ColumnType;
-import io.questdb.cairo.GeoHashes;
 import io.questdb.cairo.sql.Function;
 import io.questdb.cairo.sql.Record;
 import io.questdb.griffin.FunctionFactory;
 import io.questdb.griffin.PlanSink;
 import io.questdb.griffin.SqlException;
 import io.questdb.griffin.SqlExecutionContext;
-import io.questdb.griffin.engine.functions.AbstractGeoHashFunction;
-import io.questdb.griffin.engine.functions.BinaryFunction;
 import io.questdb.griffin.engine.functions.StrFunction;
-import io.questdb.griffin.engine.functions.constants.Constants;
 import io.questdb.std.IntList;
-import io.questdb.std.Numbers;
-import io.questdb.std.NumericException;
 import io.questdb.std.ObjList;
 import io.questdb.std.str.StringSink;
 import org.jetbrains.annotations.Contract;
@@ -49,7 +43,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.WKTWriter;
 
-public class PointFromCoordinatesFunctionFactory implements FunctionFactory {
+public class ST_MakePoint implements FunctionFactory {
 
     private static final String SYMBOL = "st_makepoint";
     private static final String SIGNATURE = SYMBOL + "(DD)";
@@ -80,20 +74,20 @@ public class PointFromCoordinatesFunctionFactory implements FunctionFactory {
                 throw SqlException.$(argPositions.getQuick(1), "latitude must be in [-90.0..90.0] range");
             }
 
-            return new ConstantPointFromCoordinatesFunction(lon, lat);
+            return new ST_MakePointConstant(lon, lat);
         } else {
-            return new PointFromCoordinatesFunction(lonArg, latArg);
+            return new ST_MakePointFunction(lonArg, latArg);
         }
     }
 
-    private static class PointFromCoordinatesFunction extends StrFunction {
+    private static class ST_MakePointFunction extends StrFunction {
         private final Function lat;
         private final Function lon;
 
         private final StringSink sinkA = new StringSink();
         private final StringSink sinkB = new StringSink();
 
-        public PointFromCoordinatesFunction(Function lon, Function lat) {
+        public ST_MakePointFunction(Function lon, Function lat) {
             this.lon = lon;
             this.lat = lat;
         }
@@ -101,14 +95,18 @@ public class PointFromCoordinatesFunctionFactory implements FunctionFactory {
         @Contract(pure = true)
         @Override
         public @Nullable CharSequence getStrA(Record rec) {
-            final double value = lon.getDouble(rec);
-            if (Double.isNaN(value)) {
-                return null;
-            }
+            final double x = lon.getDouble(rec);
+            final double y = lat.getDouble(rec);
+            GeometryFactory geometryFactory = new GeometryFactory();
+            Coordinate coord = new Coordinate(x, y);
+            Point point = geometryFactory.createPoint(coord);
+
+            // Convert the Geometry to WKT format
+            WKTWriter wktWriter = new WKTWriter();
+            String wkt = wktWriter.write(point);
             sinkA.clear();
-            sinkA.put("PPPA" + value);
-            return sinkA;
-        }
+            sinkA.put(wkt);
+            return sinkA;        }
 
         @Override
         public CharSequence getStrB(Record rec) {
@@ -128,14 +126,14 @@ public class PointFromCoordinatesFunctionFactory implements FunctionFactory {
         }
     }
 
-    private static class ConstantPointFromCoordinatesFunction extends StrFunction {
+    private static class ST_MakePointConstant extends StrFunction {
         private final Double lat;
         private final Double lon;
 
         private final StringSink sinkA = new StringSink();
         private final StringSink sinkB = new StringSink();
 
-        public ConstantPointFromCoordinatesFunction(Double lon, Double lat) {
+        public ST_MakePointConstant(Double lon, Double lat) {
             this.lon = lon;
             this.lat = lat;
         }
@@ -143,7 +141,6 @@ public class PointFromCoordinatesFunctionFactory implements FunctionFactory {
         @Contract(pure = true)
         @Override
         public @Nullable CharSequence getStrA(Record rec) {
-            final double value = lon;
             GeometryFactory geometryFactory = new GeometryFactory();
             Coordinate coord = new Coordinate(lon, lat);
             Point point = geometryFactory.createPoint(coord);
@@ -151,9 +148,6 @@ public class PointFromCoordinatesFunctionFactory implements FunctionFactory {
             // Convert the Geometry to WKT format
             WKTWriter wktWriter = new WKTWriter();
             String wkt = wktWriter.write(point);
-//            if (Double.isNaN(value)) {
-//                return null;
-//            }
             sinkA.clear();
             sinkA.put(wkt);
             return sinkA;
