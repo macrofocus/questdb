@@ -18,6 +18,17 @@ SELECT ST_MakePoint(-71.1043443253471, 42.3150676015829);
 SELECT ST_GeomFromText('LINESTRING(-71.160281 42.258729,-71.160837 42.259113,-71.161144 42.25932)');
 
 SELECT ST_GeomFromText(physicalGeometry) FROM lines;
+
+SELECT logicalBusId, ST_Distance(ST_MakePoint(-71.1043443253471, 42.3150676015829),ST_MakePoint(longitude, latitude)) FROM substations;
+
+SELECT logicalBranchId,ST_Distance(ST_MakePoint(-71.1043443253471, 42.3150676015829),ST_GeomFromText(physicalGeometry)) FROM lines;
+
+SELECT linesA.logicalBranchId,linesB.logicalBranchId, ST_Distance(ST_GeomFromText(linesA.physicalGeometry),ST_GeomFromText(linesB.physicalGeometry))
+FROM lines linesA
+CROSS JOIN lines linesB
+WHERE ST_Distance(ST_GeomFromText(linesA.physicalGeometry),ST_GeomFromText(linesB.physicalGeometry)) > 0
+ORDER BY ST_Distance(ST_GeomFromText(linesA.physicalGeometry),ST_GeomFromText(linesB.physicalGeometry)) DESC
+;
 ----
 
 == How to...

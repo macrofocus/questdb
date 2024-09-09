@@ -22,7 +22,7 @@
  *
  ******************************************************************************/
 
-import io.questdb.griffin.engine.functions.gis.ST_MakePoint;
+import io.questdb.griffin.FunctionFactory;
 
 open module io.questdb {
     requires transitive jdk.unsupported;
@@ -1019,6 +1019,7 @@ open module io.questdb {
 
             // GIS function
             io.questdb.griffin.engine.functions.gis.ST_MakePoint,
-            io.questdb.griffin.engine.functions.gis.ST_GeomFromText
+            io.questdb.griffin.engine.functions.gis.ST_GeomFromText,
+            io.questdb.griffin.engine.functions.gis.ST_Distance
     ;
 }
