@@ -30,6 +30,7 @@ open module io.questdb {
     requires static java.management;
     requires jdk.management;
     requires org.locationtech.jts;
+    requires java.sql;
 
     uses io.questdb.griffin.FunctionFactory;
     exports io.questdb;
@@ -1017,6 +1018,7 @@ open module io.questdb {
             io.questdb.griffin.engine.functions.date.ToUTCTimestampFunctionFactory,
 
             // GIS function
-            io.questdb.griffin.engine.functions.gis.PointFromCoordinatesFunctionFactory
+            io.questdb.griffin.engine.functions.gis.PointFromCoordinatesFunctionFactory,
+            io.questdb.griffin.engine.functions.gis.ST_GeomFromText
     ;
 }
