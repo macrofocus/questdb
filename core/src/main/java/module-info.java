@@ -29,6 +29,7 @@ open module io.questdb {
     requires static org.jetbrains.annotations;
     requires static java.management;
     requires jdk.management;
+    requires org.locationtech.jts;
 
     uses io.questdb.griffin.FunctionFactory;
     exports io.questdb;
@@ -1013,6 +1014,9 @@ open module io.questdb {
             io.questdb.griffin.engine.functions.math.IPv4StrNetmaskFunctionFactory,
 
             io.questdb.griffin.engine.functions.date.ToTimezoneTimestampFunctionFactory,
-            io.questdb.griffin.engine.functions.date.ToUTCTimestampFunctionFactory
-            ;
+            io.questdb.griffin.engine.functions.date.ToUTCTimestampFunctionFactory,
+
+            // GIS function
+            io.questdb.griffin.engine.functions.gis.PointFromCoordinatesFunctionFactory
+    ;
 }

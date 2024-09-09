@@ -1,0 +1,23 @@
+= Luc's notes
+
+ sdk use java 17.0.12-jbr
+
+ mvn clean package -DskipTests -P build-web-console
+
+ java -p core/target/questdb-8.1.1-SNAPSHOT.jar -cp /Users/luc/.m2/repository/org/locationtech/jts/jts-core-1.20.0.jar -m io.questdb/io.questdb.ServerMain -d /Users/luc/macrofocus/dataset/swissgrid/efluxdb/
+
+ java -cp /Users/luc/.m2/repository/org/locationtech/jts/jts-core-1.20.0.jar:core/target/questdb-8.1.1-SNAPSHOT.jar io.questdb.ServerMain -d /Users/luc/macrofocus/dataset/swissgrid/efluxdb/
+
+http://127.0.0.1:9000/
+
+----
+select ST_MakePoint(longitude, latitude) FROM substations;
+----
+
+== How to...
+
+- have SQL functions with parameters with default values (i.e. non-required), e.g.
+
+ geometry ST_Point(float x, float y, integer srid=unknown);
+
+- Why is there two functions as part of `StrFunction`: `getStrA` and `getStrB`?. What is the class `StringSink`?
